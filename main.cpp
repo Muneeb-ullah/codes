@@ -1,75 +1,48 @@
 #include <iostream>
 #include <string>
 
-double parseDollars(std::string);
+std::string toDollars(double);
 
 int main()
 {
 
-    std::string amount;
+    double number = 0.0;
 
-    std::cout << "Enter the amount in dollars : ";
-    std::getline(std::cin, amount);
+    std::cout << "Enter a number : ";
+    std::cin >> number;
 
-    printf("You entered %.4f dollars", parseDollars(amount));
-
-
-
+    std::cout << "You entered " << toDollars(number) << " dollars";
 
     return 0;
 }
 
-double parseDollars(std::string data)
+std::string toDollars(double number)
 {
 
-    double number = 0.0;
-    bool afterPoint = false;                // Indicates that the number also has a fractional part
-    std::string pointValueString = "";      // Stores the fractional part of number
-    double pointValue = 0.0;                // Stores the parsed fractional part of number;
-    int length = 1;                         // Length of fractional part. This is used to divide the number by 10 ** length times so that it is converted into a fraction
+    std::string originalNumber = std::to_string(number) ;
+    bool insertComma = false;
+    int counter = 1;
 
-    for(int i = 0; i < data.length(); ++i)
+
+    for(int i = originalNumber.length() - 1; i >= 0; --i)
     {
-
-        if (afterPoint)
+        if (originalNumber.at(i) == '.')
         {
-            pointValueString += data.at(i);
+            insertComma = true;
             continue;
         }
 
-        if(data.at(i) == '$' || data.at(i) == ',' || data.at(i) == ' ' || data.at(i) == '-')
-
-            continue;
-
-        else if (data.at(i) == '.')
-
-            afterPoint = true;
-
-        else
+        if (insertComma)
         {
-            number += data.at(i) - '0';
-            number *= 10;
+            if (counter % 3 == 0 && i)
+
+                originalNumber.insert(i, ",");
+
+            ++counter;
         }
-
     }
 
-    for(int i = 0; i < pointValueString.length(); ++i)
-    {
-        pointValue += pointValueString.at(i) - '0';
-        pointValue *= 10;
-    }
+    originalNumber.insert(0,"$");
 
-    pointValue /= 10;
-
-    for(int i = 0; i < pointValueString.length(); ++i)
-
-        length *= 10;
-
-
-    number /= 10;
-
-    number += pointValue / length;
-
-    return number;
-
+    return originalNumber;
 }
